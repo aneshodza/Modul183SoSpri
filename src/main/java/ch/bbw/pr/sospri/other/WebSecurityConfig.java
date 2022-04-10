@@ -1,11 +1,18 @@
 package ch.bbw.pr.sospri.other;
 
+import ch.bbw.pr.sospri.member.Member;
+import ch.bbw.pr.sospri.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * @class: WebSecurityConfig
@@ -15,13 +22,30 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
+@ComponentScan(basePackageClasses = MemberService.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+    /*@Autowired
     public void globalSecurityConfiguration(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("user");
         auth.inMemoryAuthentication().withUser("supervisor").password("{noop}password").roles("user", "supervisor");
         auth.inMemoryAuthentication().withUser("admin").password("{noop}password").roles("user","supervisor", "admin");
+    }*/
+
+    @Autowired
+    private MemberService memberService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(this.memberService);
+        return provider;
     }
 
     @Override
@@ -29,13 +53,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/css/**").permitAll()
                 .antMatchers("/fragments/**").permitAll()
+                .antMatchers("/img/**").permitAll()
                 .antMatchers("/get-register").permitAll()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/404.html").permitAll()
+                .antMatchers("/index.html").permitAll()
+                .antMatchers("/h2-console").permitAll()
+                .antMatchers("/logout").permitAll()
                 .antMatchers("/contact.html").permitAll()
                 .antMatchers("/get-members").hasAuthority("admin")
-                .antMatchers("/get-channel").hasAuthority("member")
+                .antMatchers("/get-channel").hasAnyAuthority("member", "supervisor", "admin")
                 .and().exceptionHandling().accessDeniedPage("/403.html")
-                .and().formLogin().loginPage("/login").failureUrl("/login?error=true").permitAll();
+                .and().formLogin().loginPage("/login").failureUrl("/login?error=true").permitAll()
+                .and().logout().permitAll();
 
         http.csrf().ignoringAntMatchers("/h2-console/**")
                 .and().headers().frameOptions().sameOrigin();
@@ -44,5 +75,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .anyRequest().authenticated();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 }

@@ -1,5 +1,6 @@
 package ch.bbw.pr.sospri;
 
+import java.security.Principal;
 import java.util.Date;
 
 import javax.validation.Valid;
@@ -29,7 +30,10 @@ public class ChannelsController {
 	MemberService memberservice;
 
 	@GetMapping("/get-channel")
-	public String getRequestChannel(Model model) {
+	public String getRequestChannel(Model model, Principal principal) {
+		if (memberservice.getByUserName(principal.getName()).shouldChange()) {
+			return "redirect:/pass-change";
+		}
 		System.out.println("getRequestChannel");
 		model.addAttribute("messages", messageservice.getAll());
 		
@@ -41,7 +45,7 @@ public class ChannelsController {
 	}
 
 	@PostMapping("/add-message")
-	public String postRequestChannel(Model model, @ModelAttribute @Valid Message message, BindingResult bindingResult) {
+	public String postRequestChannel(Model model, @ModelAttribute @Valid Message message, BindingResult bindingResult, Principal principal) {
 		System.out.println("postRequestChannel(): message: " + message.toString());
 		if(bindingResult.hasErrors()) {
 			System.out.println("postRequestChannel(): has Error(s): " + bindingResult.getErrorCount());
@@ -49,7 +53,7 @@ public class ChannelsController {
 			return "channel";
 		}
 		// Hack solange es kein authenticated member hat
-		Member tmpMember = memberservice.getById(4L);
+		Member tmpMember = memberservice.getByUserName(principal.getName());
 		message.setAuthor(tmpMember.getPrename() + " " + tmpMember.getLastname());
 		message.setOrigin(new Date());
 		System.out.println("message: " + message);

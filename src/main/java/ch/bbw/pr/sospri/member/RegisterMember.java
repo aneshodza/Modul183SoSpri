@@ -62,6 +62,11 @@ public class RegisterMember {
 		this.message = message;
 	}
 
+	public boolean isMessagePositive() {
+		if (Double.parseDouble(this.getMessage()) > 0) return true;
+			else return false;
+	}
+
 	@Override
 	public String toString() {
 		return "RegisterMember [prename=" + prename + ", lastname=" + lastname + ", password=" + password

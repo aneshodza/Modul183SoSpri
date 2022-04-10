@@ -8,6 +8,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.Duration;
+import java.time.LocalDate;
 
 /**
  * A member
@@ -36,16 +38,39 @@ public class Member {
 	
 	private String authority;
 
+	private LocalDate lastPassChange;
+
 	public Member(String prename, String lastname, String password) {
 		this.prename = prename;
 		this.lastname = lastname;
 		this.password = password;
 		this.username = prename.toLowerCase() + "." + lastname.toLowerCase();
 		this.authority = "member";
+		this.lastPassChange = LocalDate.now();
 	}
 
 	public Member() {
 
+	}
+
+	public boolean shouldChange() {
+		System.out.println(Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays() > 30);
+		System.out.println(Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays());
+		if (Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays() < -30) {
+			return true;
+		} else return false;
+	}
+
+	public boolean isAdmin() {
+		if (this.getAuthority().equalsIgnoreCase("admin")) {
+			return true;
+		} else return false;
+	}
+
+	public boolean isSupervisor() {
+		if (this.getAuthority().equalsIgnoreCase("supervisor")) {
+			return true;
+		} else return false;
 	}
 
 	public Long getId() {
@@ -97,10 +122,24 @@ public class Member {
 		this.authority = authority;
 	}
 
-	@Override
-	public String toString() {
-		return "Member [id=" + id + ", prename=" + prename + ", lastname=" + lastname + ", password=" + password
-				+ ", username=" + username + ", authority=" + authority + "]";
+	public LocalDate getLastPassChange() {
+		return lastPassChange;
 	}
 
+	public void setLastPassChange(LocalDate lastPassChange) {
+		this.lastPassChange = lastPassChange;
+	}
+
+	@Override
+	public String toString() {
+		return "Member{" +
+				"id=" + id +
+				", prename='" + prename + '\'' +
+				", lastname='" + lastname + '\'' +
+				", password='" + password + '\'' +
+				", username='" + username + '\'' +
+				", authority='" + authority + '\'' +
+				", lastPassChange=" + lastPassChange +
+				'}';
+	}
 }

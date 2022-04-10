@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -23,7 +24,10 @@ public class MembersController {
 	MemberService memberservice;
 	
 	@GetMapping("/get-members")
-	public String getRequestMembers(Model model, Principal principal) {
+	public String getRequestMembers(Model model, Principal principal, RedirectAttributes redirectAttributes) {
+		if (memberservice.getByUserName(principal.getName()).shouldChange()) {
+			return "redirect:/pass-change";
+		}
 		System.out.println(principal.getName());
 		System.out.println("getRequestMembers");
 		model.addAttribute("members", memberservice.getAll());

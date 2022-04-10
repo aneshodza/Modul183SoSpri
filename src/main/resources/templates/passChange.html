@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>SoSpri-the-page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/pr_bbw.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script>
+    $(function() {
+      $("#includedHeader").load("fragments/header.html");
+      $("#includedFooter").load("fragments/footer.html");
+    });
+  </script>
+</head>
+
+<body>
+  <div id="includedHeader"></div>
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <div>
+            <h4 style="margin-top: 30px">Change your password</h4>
+            <div class="row">
+              <div class=" col-lg-8 col-lg-offset-2">
+                <form id="register-form" method="post" action="" role="form" th:action="@{/pass-change}"
+                  th:object="${registerMember}" >
+                  <div class="messages"></div>
+                  <div class="controls">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="form_name">New password *</label>
+                          <input id="form_name" type="text" name="username" class="form-control" placeholder="Please enter your new password *" required="required" th:field="*{password}">
+                          <div class="help-block with-errors"></div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="form_lastname">Confirmation *</label> <input id="form_lastname" type="text" name="password" class="form-control" placeholder="Please confirm your password *" required="required" th:field="*{confirmation}">
+                          <div class="help-block with-errors"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div th:unless="${registerMember.isMessagePositive()}" class="alert alert-danger">
+                          You had to change it <b th:text="${registerMember.message.substring(1)}" /> days ago.
+                        </div>
+                        <div th:if="${registerMember.isMessagePositive()}" class="alert alert-success">
+                          You have <b th:text="${registerMember.message}" /> more days to change it.
+                        </div>
+                      </div>
+                    </div>
+                    <div th:if="${param.error}" class="alert alert-danger">
+                      Could not change password, check if you typed the confirmation right
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <input type="submit" class="btn btn-success btn-send" value="Log in">
+                        <p></p>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div style="height: 200px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="includedFooter"></div>
+</body>
+<script defer>
+  var score = document.getElementById("liveScoreUpdate");
+  var input = document.getElementById("form_password");
+  var loadingBar = document.getElementById("myBar");
+  input.addEventListener('input', updateScore);
+  function updateScore(e) {
+    let newScore = 0;
+    let newPassword = e.target.value.toString();
+    newScore = newScore + ((newPassword || '').match(/[A-Z]/g) || []).length * 2; // Two points for lowercase chars
+    newScore = newScore + ((newPassword || '').match(/[a-z]/g) || []).length * 2; // Two points for uppercase chars
+    newScore = newScore + ((newPassword || '').match(/[0-9]/g) || []).length * 3; // Three points for every digit
+    newScore = newScore + ((newPassword || '').match(/[#?!@$%^&*-]/g) || []).length * 4; // Four points for every special char
+    newScore = newScore + ((newPassword || '').match(/[^#?!@$%^\-&*0-9a-zA-Z]/g) || []).length; // One point for every other char
+    score.innerText = "Password score: " + newScore;
+    loadingBar.style.width = (newScore / 0.4 > 100 ? 100 : newScore / 0.4).toString() + "%";
+    loadingBar.style.backgroundColor = newScore / 0.4 > 40 ? newScore / 0.4 > 80 ? 'green' : 'orange' : 'red'
+  }
+</script>
+<style>
+  #myProgress {
+    width: 100%;
+    background-color: grey;
+  }
+
+  #myBar {
+    width: 0%;
+    height: 30px;
+    background-color: green;
+  }
+</style>
+</html>

@@ -1,7 +1,10 @@
 package ch.bbw.pr.sospri.member;
 
+import ch.bbw.pr.sospri.other.MemberToUserDetailsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +21,7 @@ import java.util.stream.StreamSupport;
  */
 @Service
 @Transactional
-public class MemberService{
+public class MemberService implements UserDetailsService{
 	@Autowired
 	private MemberRepository repository;
 	
@@ -55,7 +58,7 @@ public class MemberService{
 		Iterable<Member> memberitr = repository.findAll();
 		
 		for(Member member: memberitr){
-			if (member.getUsername().equals(username)) {
+			if (member.getUsername().equalsIgnoreCase(username)) {
 				return member;
 			}
 		}
@@ -66,5 +69,11 @@ public class MemberService{
 	public boolean usernameExists(String username) {
 		return StreamSupport.stream(getAll().spliterator(), false)
 				.anyMatch(user -> username.equalsIgnoreCase(user.getUsername()));
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Member member = repository.findMemberByUsername(username);
+		return MemberToUserDetailsMapper.toUserDetails(member);
 	}
 }

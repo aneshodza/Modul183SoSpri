@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
  */
                                                        //Klasse, id-Typ
 public interface MemberRepository extends CrudRepository<Member, Long>{
+    Member findMemberByUsername(String username);
 	//Da wir eine embedded database verwenden, braucht es keine Conecction Information.
 }
 
