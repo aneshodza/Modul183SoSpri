@@ -25,19 +25,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ComponentScan(basePackageClasses = MemberService.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    /*@Autowired
-    public void globalSecurityConfiguration(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("user").password("{noop}password").roles("user");
-        auth.inMemoryAuthentication().withUser("supervisor").password("{noop}password").roles("user", "supervisor");
-        auth.inMemoryAuthentication().withUser("admin").password("{noop}password").roles("user","supervisor", "admin");
-    }*/
-
     @Autowired
     private MemberService memberService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new CustomPasswordEncoder();
     }
 
     @Bean
@@ -64,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/contact.html").permitAll()
                 .antMatchers("/get-members").hasAuthority("admin")
                 .antMatchers("/get-channel").hasAnyAuthority("member", "supervisor", "admin")
+                .antMatchers("/h2-console").permitAll()
                 .and().exceptionHandling().accessDeniedPage("/403.html")
                 .and().formLogin().loginPage("/login").failureUrl("/login?error=true").permitAll()
                 .and().logout().permitAll();

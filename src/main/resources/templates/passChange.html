@@ -34,14 +34,18 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="form_name">New password *</label>
-                          <input id="form_name" type="text" name="username" class="form-control" placeholder="Please enter your new password *" required="required" th:field="*{password}">
+                          <label for="form_password">New password *</label>
+                          <input id="form_password" type="text" name="username" class="form-control" placeholder="Please enter your new password *" required="required" th:field="*{password}">
                           <div class="help-block with-errors"></div>
                         </div>
+                        <div id="myProgress">
+                          <div id="myBar"></div>
+                        </div>
+                        <p id="liveScoreUpdate">Password score: 0</p>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
-                          <label for="form_lastname">Confirmation *</label> <input id="form_lastname" type="text" name="password" class="form-control" placeholder="Please confirm your password *" required="required" th:field="*{confirmation}">
+                          <label for="form_confirmation">Confirmation *</label> <input id="form_confirmation" type="text" name="password" class="form-control" placeholder="Please confirm your password *" required="required" th:field="*{confirmation}">
                           <div class="help-block with-errors"></div>
                         </div>
                       </div>
@@ -61,7 +65,7 @@
                     </div>
                     <div class="row">
                       <div class="col-md-12">
-                        <input type="submit" class="btn btn-success btn-send" value="Log in">
+                        <input type="submit" class="btn btn-success btn-send" value="Change password">
                         <p></p>
                       </div>
                     </div>

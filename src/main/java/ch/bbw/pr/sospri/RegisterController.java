@@ -1,6 +1,7 @@
 package ch.bbw.pr.sospri;
 
 import ch.bbw.pr.sospri.member.Member;
+import ch.bbw.pr.sospri.other.CustomPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -41,9 +42,8 @@ public class RegisterController {
 			if (result.hasErrors()) {
 				return "register";
 			}
-			int strength = 10;
-			BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(strength, new SecureRandom());
-			String encodedPassword = bCryptPasswordEncoder.encode(registerMember.getPassword());
+			CustomPasswordEncoder customPasswordEncoder = new CustomPasswordEncoder();
+			String encodedPassword = customPasswordEncoder.encode(registerMember.getPassword());
 			memberservice.add(new Member(registerMember.getPrename(), registerMember.getLastname(), encodedPassword));
 			model.addAttribute("registerMember", registerMember);
 			return "registerconfirmed";

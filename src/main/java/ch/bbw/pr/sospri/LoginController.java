@@ -3,6 +3,7 @@ package ch.bbw.pr.sospri;
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.member.RegisterMember;
+import ch.bbw.pr.sospri.other.CustomPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,7 +45,6 @@ public class LoginController {
     @GetMapping("/pass-change")
     public String passChange(Model model, Principal principal) {
         model.addAttribute("registerMember", new RegisterMember(Long.toString(Duration.between(LocalDate.now().atStartOfDay(), memberService.getByUserName(principal.getName()).getLastPassChange().atStartOfDay()).toDays() + 30)));
-        System.out.println(Duration.between(LocalDate.now().atStartOfDay(), memberService.getByUserName(principal.getName()).getLastPassChange().atStartOfDay()).toDays());
         return "/passChange";
     }
 
@@ -54,9 +54,10 @@ public class LoginController {
             redirectAttributes.addAttribute("error", true);
             return "redirect:/pass-change";
         }
-        Member member = memberService.getByUserName(principal.getName());
-        member.setPassword(registerMember.getPassword());
-        member.setLastPassChange(LocalDate.now());
+        CustomPasswordEncoder customPasswordEncoder = new CustomPasswordEncoder();
+        String encodedPassword = customPasswordEncoder.encode(registerMember.getPassword());
+        System.out.println(principal.getName());
+        memberService.changePassword(principal.getName(), encodedPassword);
         return "redirect:/index.html";
     }
 }

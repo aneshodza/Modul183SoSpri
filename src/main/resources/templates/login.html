@@ -67,34 +67,4 @@
 
   <div id="includedFooter"></div>
 </body>
-<script defer>
-  var score = document.getElementById("liveScoreUpdate");
-  var input = document.getElementById("form_password");
-  var loadingBar = document.getElementById("myBar");
-  input.addEventListener('input', updateScore);
-  function updateScore(e) {
-    let newScore = 0;
-    let newPassword = e.target.value.toString();
-    newScore = newScore + ((newPassword || '').match(/[A-Z]/g) || []).length * 2; // Two points for lowercase chars
-    newScore = newScore + ((newPassword || '').match(/[a-z]/g) || []).length * 2; // Two points for uppercase chars
-    newScore = newScore + ((newPassword || '').match(/[0-9]/g) || []).length * 3; // Three points for every digit
-    newScore = newScore + ((newPassword || '').match(/[#?!@$%^&*-]/g) || []).length * 4; // Four points for every special char
-    newScore = newScore + ((newPassword || '').match(/[^#?!@$%^\-&*0-9a-zA-Z]/g) || []).length; // One point for every other char
-    score.innerText = "Password score: " + newScore;
-    loadingBar.style.width = (newScore / 0.4 > 100 ? 100 : newScore / 0.4).toString() + "%";
-    loadingBar.style.backgroundColor = newScore / 0.4 > 40 ? newScore / 0.4 > 80 ? 'green' : 'orange' : 'red'
-  }
-</script>
-<style>
-  #myProgress {
-    width: 100%;
-    background-color: grey;
-  }
-
-  #myBar {
-    width: 0%;
-    height: 30px;
-    background-color: green;
-  }
-</style>
 </html>

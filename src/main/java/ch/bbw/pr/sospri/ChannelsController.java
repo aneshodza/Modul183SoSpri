@@ -34,12 +34,10 @@ public class ChannelsController {
 		if (memberservice.getByUserName(principal.getName()).shouldChange()) {
 			return "redirect:/pass-change";
 		}
-		System.out.println("getRequestChannel");
 		model.addAttribute("messages", messageservice.getAll());
 		
 		Message message = new Message();
 		message.setContent("Der zweite Pfeil trifft immer.");
-		System.out.println("message: " + message);
 		model.addAttribute("message", message);
 		return "channel";
 	}

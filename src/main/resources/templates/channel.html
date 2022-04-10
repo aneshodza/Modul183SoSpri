@@ -46,10 +46,14 @@
 						<ul class="media-list" th:each="message : ${messages}">
 							<li class="media">
 								<a class="pull-left" href="#"> <img src="img/small-avatar.png" alt="" /></a>
-								<div>
+								<div th:id="'message-' + ${message.getId()}">
 									<h5><a href="#" th:text="${message.author}"></a></h5>
 									<span class="pr_text_green" th:text="${message.origin}"></span>
-									<p th:text="${message.content}"></p>
+									<br />
+									<p th:text="${message.content}" id="text"></p>
+									<br />
+									<a th:href="@{'/delete-message/' + ${message.getId()}}"><button class="btn btn-danger">Delete</button></a>
+									<button class="btn btn-warning" id='edit-button' th:onclick="'editMessage(' + ${message.getId()} + ')'">Edit</button>
 								</div>
 							</li>
 						</ul>
@@ -58,7 +62,7 @@
 				</div>
 
 				<div style="margin-top: 10px; margin-bottom: 30px">
-					<form action="#" th:action="@{/add-message}" th:object="${message}" method="post">
+					<form action="#" th:action="@{/add-message}" th:object="${message}" method="post" id="send-message-form">
 						<div class="input-group">
 							<input id="input-content" type="text" class="form-control input-sm" placeholder="Type your message here..." th:field="*{content}" />
 							<span class="input-group-btn">
@@ -76,5 +80,31 @@
 
 	<div id="includedFooter"></div>
 </body>
+<script defer>
 
+	var editClicks = {};
+	var sendButton = document.querySelector("input#btn-send.btn.btn-warning")
+	var newMessage = document.querySelector("input#input-content.form-control.input-sm").value
+	var form = document.querySelector("form#send-message-form")
+	var idUsed = null
+
+	function editMessage(id) {
+		idUsed = id
+		console.log(editClicks[id])
+		if (editClicks[id] == undefined) {
+			editClicks[id] = 0;
+		}
+		editClicks[id]++;
+		if (editClicks[id] % 2 == 1) {
+			sendButton.classList.remove('btn-warning')
+			sendButton.classList.add('btn-success')
+			form.action = "/edit-message/" + idUsed
+		} else {
+			sendButton.classList.add('btn-warning')
+			sendButton.classList.remove('btn-success')
+			form.action = "/add-message"
+		}
+	}
+
+</script>
 </html>

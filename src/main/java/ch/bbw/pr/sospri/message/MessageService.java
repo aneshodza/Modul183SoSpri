@@ -22,11 +22,16 @@ public class MessageService {
 	}
 
 	public void update(Long id, Message message) {
-		//save geht auch für update.
-		repository.save(message);
+		Message message1 = repository.findById(id).get();
+		message1.setContent(message.getContent());
+		repository.save(message1);
 	}
 
 	public void deleteById(Long id) {
 		repository.deleteById(id);
+	}
+
+	public Message getById(Long id) {
+		return repository.findById(id).get();
 	}
 }
