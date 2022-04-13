@@ -102,12 +102,19 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div th:if="${#fields.hasAnyErrors()}">
+                                            <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger">
                                                 <ul>
                                                     <li th:each="err : ${#fields.allErrors()}" th:text="${err}"/>
                                                 </ul>
                                             </div>
                                             <b th:text="*{message}"></b>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div th:if="${param.error}" class="alert alert-danger">
+                                                <b th:text="${param.error}" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

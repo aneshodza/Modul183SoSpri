@@ -74,6 +74,9 @@
 						<p th:if="${#fields.hasErrors('origin')}" th:errors="*{origin}" style="color:red"></p>
 					</form>
 				</div>
+				<div th:if="${param.profanity}" class="alert alert-danger">
+					Your message cannot contain profanity
+				</div>
 			</div>
 		</div>
 	</div>

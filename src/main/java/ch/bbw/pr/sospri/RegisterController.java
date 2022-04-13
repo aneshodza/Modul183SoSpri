@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.member.RegisterMember;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.security.SecureRandom;
@@ -34,7 +35,7 @@ public class RegisterController {
 	}
 
 	@PostMapping("/get-register")
-	public String postRequestRegistMembers(@Valid RegisterMember registerMember, BindingResult result, Model model) {
+	public String postRequestRegistMembers(@Valid RegisterMember registerMember, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		System.out.println("postRequestRegistMembers: registerMember");
 		System.out.println(registerMember);
 		int validation = validateRegister(registerMember.getPrename(), registerMember.getLastname(), registerMember.getPassword(), registerMember.getConfirmation());
@@ -69,8 +70,8 @@ public class RegisterController {
 					error = "There was an unexpected error...";
 					break;
 			}
-			registerMember.setMessage(error);
-			return "register";
+			redirectAttributes.addAttribute("error", error);
+			return "redirect:/get-register";
 		}
 	}
 

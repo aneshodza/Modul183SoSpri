@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
+import ch.bbw.pr.sospri.other.ProfanityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,8 @@ import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.message.Message;
 import ch.bbw.pr.sospri.message.MessageService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 /**
  * ChannelsController
  * @author Peter Rutschmann
@@ -43,8 +46,12 @@ public class ChannelsController {
 	}
 
 	@PostMapping("/add-message")
-	public String postRequestChannel(Model model, @ModelAttribute @Valid Message message, BindingResult bindingResult, Principal principal) {
+	public String postRequestChannel(Model model, @ModelAttribute @Valid Message message, BindingResult bindingResult, Principal principal, RedirectAttributes redirectAttributes) {
 		System.out.println("postRequestChannel(): message: " + message.toString());
+		if (ProfanityFilter.hasProfanity(message.getContent())) {
+			redirectAttributes.addAttribute("profanity", true);
+			return "redirect:/get-channel";
+		}
 		if(bindingResult.hasErrors()) {
 			System.out.println("postRequestChannel(): has Error(s): " + bindingResult.getErrorCount());
 			model.addAttribute("messages", messageservice.getAll());

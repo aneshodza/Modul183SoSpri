@@ -54,9 +54,7 @@ public class Member {
 	}
 
 	public boolean shouldChange() {
-		System.out.println(Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays() > 30);
-		System.out.println(Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays());
-		if (Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays() < -30) {
+		if (Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays() < - 30) {
 			return true;
 		} else return false;
 	}

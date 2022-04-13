@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <title>SoSpri-the-page</title>
@@ -32,6 +32,9 @@
         <h2>Letzte Änderungen</h2>
         <h5>Neues Layout alte Sprüche, März 12, 2020</h5>
         <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+        <div th:if="${param.changedPass}" class="alert alert-success">
+          Successfully changed your password
+        </div>
         <div style="height:200px"></div>
       </div>
     </div>

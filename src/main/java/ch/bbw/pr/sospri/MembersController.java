@@ -28,7 +28,6 @@ public class MembersController {
 		if (memberservice.getByUserName(principal.getName()).shouldChange()) {
 			return "redirect:/pass-change";
 		}
-		System.out.println(principal.getName());
 		System.out.println("getRequestMembers");
 		model.addAttribute("members", memberservice.getAll());
 		return "members";

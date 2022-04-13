@@ -58,6 +58,7 @@ public class LoginController {
         String encodedPassword = customPasswordEncoder.encode(registerMember.getPassword());
         System.out.println(principal.getName());
         memberService.changePassword(principal.getName(), encodedPassword);
+        redirectAttributes.addAttribute("changedPass", true);
         return "redirect:/index.html";
     }
 }
