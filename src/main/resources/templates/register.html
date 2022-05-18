@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<!-- RECAPTCHA -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <head>
     <title>SoSpri-the-page</title>
     <meta charset="utf-8">
@@ -99,6 +102,10 @@
                                             <input type="submit" class="btn btn-success btn-send" value="Register">
                                             <p></p>
                                         </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="g-recaptcha col-md-5" th:attr="data-sitekey=${@captchaSettings.getSite()}"></div>
+                                        <span id="captchaError" class="alert alert-danger col-sm-4" style="display: none"></span>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">

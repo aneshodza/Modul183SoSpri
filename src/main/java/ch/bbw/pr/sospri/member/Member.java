@@ -54,6 +54,7 @@ public class Member {
 	}
 
 	public boolean shouldChange() {
+		if (this.authority == "ROLE_USER") return false;
 		if (Duration.between(LocalDate.now().atStartOfDay(), this.getLastPassChange().atStartOfDay()).toDays() < - 30) {
 			return true;
 		} else return false;

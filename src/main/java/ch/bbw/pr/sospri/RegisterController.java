@@ -1,9 +1,11 @@
 package ch.bbw.pr.sospri;
 
+import ch.bbw.pr.sospri.captcha.ReCaptchaValidationService;
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.other.CustomPasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,10 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.member.RegisterMember;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.security.SecureRandom;
+import java.security.Principal;
 
 /**
  * RegisterController
@@ -24,23 +27,38 @@ import java.security.SecureRandom;
  */
 @Controller
 public class RegisterController {
+
+	Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	MemberService memberservice;
+	@Autowired
+	ReCaptchaValidationService reCaptchaService;
 
 	@GetMapping("/get-register")
-	public String getRequestRegistMembers(Model model) {
+	public String getRequestRegistMembers(Model model, Principal principal) {
 		System.out.println("getRequestRegistMembers");
 		model.addAttribute("registerMember", new RegisterMember());
 		return "register";
 	}
 
 	@PostMapping("/get-register")
-	public String postRequestRegistMembers(@Valid RegisterMember registerMember, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+	public String postRequestRegistMembers(@Valid RegisterMember registerMember, BindingResult result, RedirectAttributes redirectAttributes,
+										   @RequestParam(name = "g-recaptcha-response") String captcha,
+										   Model model) {
 		System.out.println("postRequestRegistMembers: registerMember");
 		System.out.println(registerMember);
+		if(!reCaptchaService.validateCaptcha(captcha)) {
+			logger.debug("Captcha failed");
+			registerMember.setMessage("Captcha was not correct!");
+			logger.error("Captcha Failure: Captcha was not correct!");
+			return "register";
+		}
+		logger.debug("Captcha is correct!");
 		int validation = validateRegister(registerMember.getPrename(), registerMember.getLastname(), registerMember.getPassword(), registerMember.getConfirmation());
 		if (validation == 0) {
 			if (result.hasErrors()) {
+				logger.error("There was an error when creating account, most likely due to wrong user input");
 				return "register";
 			}
 			CustomPasswordEncoder customPasswordEncoder = new CustomPasswordEncoder();
@@ -70,6 +88,7 @@ public class RegisterController {
 					error = "There was an unexpected error...";
 					break;
 			}
+			logger.warn("Could not sign in due to " + error);
 			redirectAttributes.addAttribute("error", error);
 			return "redirect:/get-register";
 		}

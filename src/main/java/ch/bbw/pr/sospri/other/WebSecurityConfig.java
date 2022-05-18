@@ -56,11 +56,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/logout").permitAll()
                 .antMatchers("/contact.html").permitAll()
                 .antMatchers("/get-members").hasAuthority("admin")
-                .antMatchers("/get-channel").hasAnyAuthority("member", "supervisor", "admin")
+                .antMatchers("/get-channel").hasAnyAuthority("member", "supervisor", "admin", "ROLE_USER")
                 .antMatchers("/h2-console").permitAll()
                 .and().exceptionHandling().accessDeniedPage("/403.html")
                 .and().formLogin().loginPage("/login").failureUrl("/login?error=true").permitAll()
-                .and().logout().permitAll();
+                .and().logout().permitAll()
+                .and().oauth2Login().defaultSuccessUrl("/get-channel?google=true");
 
         http.csrf().ignoringAntMatchers("/h2-console/**")
                 .and().headers().frameOptions().sameOrigin();

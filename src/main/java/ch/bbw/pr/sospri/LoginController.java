@@ -4,6 +4,8 @@ import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.member.RegisterMember;
 import ch.bbw.pr.sospri.other.CustomPasswordEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +26,8 @@ import java.time.LocalDate;
 @Controller
 public class LoginController {
 
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     MemberService memberService;
 
@@ -33,12 +37,14 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String loginDone() {
+    public String loginDone(Principal principal) {
+        logger.trace(principal.getName() + " logged in");
         return "/login";
     }
 
     @GetMapping("/logout")
-    public String logout() {
+    public String logout(Principal principal) {
+        logger.trace(principal.getName() + " logged out");
         return "/logout";
     }
 
@@ -52,11 +58,13 @@ public class LoginController {
     public String passChangeDone(RegisterMember registerMember, Principal principal, RedirectAttributes redirectAttributes) {
         if (registerMember.getPassword() == null || registerMember.getConfirmation() == null || !registerMember.getPassword().equals(registerMember.getConfirmation())) {
             redirectAttributes.addAttribute("error", true);
+            logger.warn("Passchange failed");
             return "redirect:/pass-change";
         }
         CustomPasswordEncoder customPasswordEncoder = new CustomPasswordEncoder();
         String encodedPassword = customPasswordEncoder.encode(registerMember.getPassword());
         System.out.println(principal.getName());
+        logger.info(principal.getName() + " changed password");
         memberService.changePassword(principal.getName(), encodedPassword);
         redirectAttributes.addAttribute("changedPass", true);
         return "redirect:/index.html";
