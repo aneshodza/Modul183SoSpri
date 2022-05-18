@@ -2,6 +2,9 @@ package ch.bbw.pr.sospri;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
@@ -9,6 +12,9 @@ import ch.bbw.pr.sospri.other.ProfanityFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,10 +45,10 @@ public class ChannelsController {
 
 	@GetMapping("/get-channel")
 	public String getRequestChannel(Model model, Principal principal) {
-		if (memberservice.getByUserName(principal.getName()).shouldChange()) {
+		/*if (memberservice.getByUserName(principal.getName()).shouldChange()) {
 			logger.warn(principal.getName() + " has to change password");
 			return "redirect:/pass-change";
-		}
+		}*/
 		model.addAttribute("messages", messageservice.getAll());
 		Message message = new Message();
 		message.setContent("Der zweite Pfeil trifft immer.");
@@ -66,8 +72,25 @@ public class ChannelsController {
 			return "channel";
 		}
 		// Hack solange es kein authenticated member hat
-		Member tmpMember = memberservice.getByUserName(principal.getName());
-		message.setAuthor(tmpMember.getPrename() + " " + tmpMember.getLastname());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		boolean isGoogle = false;
+		for (GrantedAuthority authority : authentication.getAuthorities()) {
+			if (authority.getAuthority().equalsIgnoreCase("ROLE_USER")) {
+				isGoogle = true;
+			}
+		}
+		Pattern pattern = Pattern.compile("(?<= )name=[^,]*");
+		Matcher m = pattern.matcher(authentication.toString());
+		if (m.find( )) {
+			System.out.println(m.group(0));
+		}
+		if (isGoogle) {
+			message.setAuthor(m.group(0).split("=")[1]);
+		} else {
+			Member tmpMember = memberservice.getByUserName(principal.getName());
+			message.setAuthor(tmpMember.getPrename() + " " + tmpMember.getLastname());
+		}
+
 		message.setOrigin(new Date());
 		System.out.println("message: " + message);
 		logger.trace(principal.getName() + " posted a new message.", message);

@@ -58,7 +58,7 @@ public class MemberService implements UserDetailsService{
 	
 	public Member getByUserName(String username) {
 		Iterable<Member> memberitr = repository.findAll();
-		
+
 		for(Member member: memberitr){
 			if (member.getUsername().equalsIgnoreCase(username)) {
 				return member;

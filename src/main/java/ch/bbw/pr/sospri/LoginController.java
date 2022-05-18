@@ -1,21 +1,31 @@
 package ch.bbw.pr.sospri;
 
-import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.member.RegisterMember;
 import ch.bbw.pr.sospri.other.CustomPasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Map;
 
 /**
  * @class: LoginController
@@ -30,6 +40,11 @@ public class LoginController {
 
     @Autowired
     MemberService memberService;
+
+    @GetMapping("/loginSuccess")
+    public String getLoginInfo() {
+        return "redirect:/index.html";
+    }
 
     @GetMapping("/login")
     public String login() {

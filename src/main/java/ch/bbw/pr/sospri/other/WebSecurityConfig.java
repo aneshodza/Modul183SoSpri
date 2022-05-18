@@ -6,13 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @class: WebSecurityConfig
@@ -59,9 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/get-channel").hasAnyAuthority("member", "supervisor", "admin", "ROLE_USER")
                 .antMatchers("/h2-console").permitAll()
                 .and().exceptionHandling().accessDeniedPage("/403.html")
-                .and().formLogin().loginPage("/login").failureUrl("/login?error=true").permitAll()
                 .and().logout().permitAll()
-                .and().oauth2Login().defaultSuccessUrl("/get-channel?google=true");
+                .and().oauth2Login().defaultSuccessUrl("/loginSuccess", true).loginPage("/login")
+                .and().formLogin().loginPage("/login").failureUrl("/login?error=true").permitAll();
 
         http.csrf().ignoringAntMatchers("/h2-console/**")
                 .and().headers().frameOptions().sameOrigin();
